@@ -1,41 +1,43 @@
 package com.example.demo.service;
 
-import com.example.demo.dao.EmployeeDAO;
+import com.example.demo.dao.EmployeeRepository;
 import com.example.demo.enitity.Employee;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-    private final EmployeeDAO employeeDAO;
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeDAO employeeDAO) {
-        this.employeeDAO = employeeDAO;
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
     public List<Employee> findAll() {
-        return employeeDAO.findAll();
+        return employeeRepository.findAll();
     }
 
     @Override
     public Employee findById(Integer id) {
-        return employeeDAO.findById(id);
+        Optional<Employee> employee = employeeRepository.findById(id);
+        return employee.orElseThrow(() -> new RuntimeException("Employee id not found - " + id));
     }
 
-    @Transactional
+    //    @Transactional  --> not needed in spring data JPA
     @Override
     public Employee save(Employee employee) {
-        return employeeDAO.save(employee);
+        return employeeRepository.save(employee);
     }
 
-    @Transactional
+    //    @Transactional
     @Override
     public void deleteById(Integer id) {
-        employeeDAO.deleteById(id);
+        employeeRepository.deleteById(id);
     }
 }
